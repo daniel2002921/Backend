@@ -1,7 +1,8 @@
       /* express.js */
       import express from 'express';
       import config from './config.js';
-      import index from '../server/routes/index.route.js';
+      import api from '../server/routes/api.route.js';
+      import web from '../server/routes/web.route.js';
 
       const app = express();
 
@@ -10,6 +11,10 @@
         res.send(`server started on  port http://127.0.0.1:${config.port} (${config.env})`);
       });
 
-      app.use('/api', index);
+      app.use('/api', api);
+      app.use('/', web);
+
+      app.set('view engine', 'ejs');
+
 
       export default app;
