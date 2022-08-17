@@ -9,6 +9,6 @@ router.get('/', (req, res) => {
   res.send(`此路徑是: localhost:${config.port}/`);
 });
 
-router.get('/Login', LoginController.index);
+router.post('/Login', LoginController.index);
 
 export default router;
