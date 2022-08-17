@@ -27,5 +27,5 @@ import 'dotenv/config'
   // listen on port config.port
   app.listen(config.port, () => {
     //console.log(`server started on  port http://127.0.0.1:${config.port} (${config.env})`);
-    console.log(`server started on  port http://127.0.0.1:${process.env.PORT} (${config.env})`);
+    console.log(`server started on  port http://127.0.0.1:${config.port} (${config.env})`);
   });
