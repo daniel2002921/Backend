@@ -6,10 +6,10 @@ dotenv.config()
 
 
 const config = {
-  "user": "admin",
-  "password": "girlnice12",
+  "user": "user1",
+  "password": "123",
   "server": "localhost",
-  "database": "TESTDB",
+  "database": "TestDB",
   "options": {"trustServerCertificate": true}   
 };
 

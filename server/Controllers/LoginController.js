@@ -4,48 +4,65 @@ import sql from 'mssql'
 const LoginController = {
     // 傳入參數 req, res
     index: (req, res) => {
+      let result = {}
+      // res.send("dsfds")
       // console.log(req.body)
       // res.send(req.body.username)
-      let keyInUsername = req.body.username
-      let keyInPassword = req.body.password
+      res.setHeader('Content-Type', 'application/json');
 
+      try{
+        let keyInUsername = req.body.username
+        let keyInPassword = req.body.password
 
-      sql.connect(Sql_config,function (err) {
-          if(err) console.log(err);
-            //create Request object
-            let result = {}
-            var request=new sql.Request();
-            let sqlquery = 'select * from testTable where account =' + "'"+keyInUsername + "'"
-            request.query(sqlquery,function(err,recordset){
+        sql.connect(Sql_config,function (err) {
             if(err) console.log(err);
-            
-            if(recordset.rowsAffected[0]!=0){
-              let sqlUsername = recordset.recordset[0].account
-              let sqlPassword = recordset.recordset[0].password
-
-              if (keyInPassword!=sqlPassword){
-                result.status = "error"
-                result.message = "密碼輸入錯誤"
-                res.send(result)
-              }
-              if(keyInPassword == sqlPassword){
-                result.status = "success"
-                result.message = "登入成功"
-                res.send(result)
-              }
-            }else{
-                result.status = "error"
-                result.message = "查無此帳號資料，請註冊"
-                res.send(result)
-            }
-            // if(recordset.recordset.length!=0){
+              //create Request object
               
-            // }
-            //send records as a response
-            // console.log(recordset.recordset)
-            // res.send(recordset.recordset);
-            });
-        });
+              var request=new sql.Request();
+              let sqlquery = 'select * from users where account =' + "'"+keyInUsername + "'"
+              request.query(sqlquery,function(err,recordset){
+              if(err) console.log(err);
+
+              
+              
+              if(recordset.rowsAffected[0]!=0){
+                let sqlUsername = recordset.recordset[0].account
+                let sqlPassword = recordset.recordset[0].password
+
+                if (keyInPassword!=sqlPassword){
+                  result.status = "error"
+                  result.message = "密碼輸入錯誤"
+                }
+                if(keyInPassword == sqlPassword){
+                  result.status = "success"
+                  result.message = "登入成功"
+                }
+
+
+              }else{
+                  console.log("8888")
+                  result.status = "error"
+                  result.message = "查無此帳號資料，請註冊"
+              }
+
+              result = JSON.stringify(result)
+              res.send(result)
+              // if(recordset.recordset.length!=0){
+                
+              // }
+              //send records as a response
+              // console.log(recordset.recordset)
+              // res.send(recordset.recordset);
+              });
+          });
+
+      }catch(err){
+        result.status = "error"
+        console.log("32444444")
+        result = JSON.stringify(result)
+        res.send(result)
+      }
+      
 
 
         // const todo = todoModel.getAll()
