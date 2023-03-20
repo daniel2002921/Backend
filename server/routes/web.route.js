@@ -1,14 +1,16 @@
 import express from 'express';
 import config from '../../config/config.js';
 import LoginController from '../Controllers/LoginController.js'
+import PackageController from '../Controllers/PackageController.js'
 
 const router = express.Router();
 
 /* GET localhost:[port]/api page. */
-router.get('/', (req, res) => {
-  res.send(`此路徑是: localhost:${config.port}/`);
+router.get('/1', (req, res) => {
+  res.send(`路徑是: localhost:${config.port}/`);
 });
 
 router.post('/Login', LoginController.index);
+router.get('/package/index', PackageController.index);
 
 export default router;

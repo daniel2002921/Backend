@@ -9,7 +9,7 @@ const config = {
   "user": "user1",
   "password": "123",
   "server": "localhost",
-  "database": "TestDB",
+  "database": "BagTrack",
   "options": {"trustServerCertificate": true}   
 };
 
