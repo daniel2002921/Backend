@@ -40,6 +40,8 @@ const LoginController = {
                 //   result.status = "success"
                 //   result.message = "登入成功"
                 // }
+                result.status = "success"
+                result.data = recordset.recordset
 
 
               }else{
