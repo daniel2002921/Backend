@@ -11,6 +11,8 @@ router.get('/1', (req, res) => {
 });
 
 router.post('/Login', LoginController.index);
+
 router.get('/package/index', PackageController.index);
+router.post('/package/create', PackageController.create);
 
 export default router;

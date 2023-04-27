@@ -1,7 +1,7 @@
 import todoModel from "../Models/data.js"
 import Sql_config from '../../config/Sql_config.js'; 
 import sql from 'mssql'
-const LoginController = {
+const PackageController = {
     // 傳入參數 req, res
 
     index: (req, res) => {
@@ -48,7 +48,6 @@ const LoginController = {
             }
 
             //getCategoryData
-
             sqlquery = 'select * from bagcategory'
             recordset = await request.query(sqlquery)
             result.categoryData = {}
@@ -62,10 +61,8 @@ const LoginController = {
                 result.cc.message = "no CategoryData"
             }
 
-      
-  
             result.status = "success"
-            console.log(result)
+            // console.log(result)
             result = JSON.stringify(result)
             res.send(result)
   
@@ -76,20 +73,45 @@ const LoginController = {
           res.send(result)
         }
       })()
+    },
+    
+    create:(req,res)=>{
+      let reqData = req.body.data
+      console.log(reqData)
+      res.setHeader('Content-Type', 'application/json');
       
+      (async () => {
+        let result = {}
+
+        try{
+          
+          const pool = await sql.connect(Sql_config)
+          const request = pool.request();
+          let sqlquery = "insert package  (reciver_name, cate, delivery_time,householder)\
+          VALUES ("+"'"+reqData.reciever + "', " + reqData.cate + ", '" + reqData.deliverytime + "', " + reqData.neighbor + ");"
+          await request.query(sqlquery)
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+
+      })()
+
       
 
 
-        // const todo = todoModel.getAll()
-
-        // // res.send(todo)
-        // res.render('hello', {
-        //     todos:todo
-        //   })
-      
     }
+
+
   }
 
 
 
-   export default LoginController
+   export default PackageController
