@@ -19,7 +19,8 @@ const LoginController = {
             const request = pool.request();
 
             //getTableData
-            let sqlquery = 'select top(20) * from package'
+            let sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,delivery_time,\
+            sign,householder from package left join bagcategory as cate on cate.id = package.cate'
             let recordset = await request.query(sqlquery)
             result.tableData = {}
             if(recordset.rowsAffected[0]!=0){
@@ -44,6 +45,21 @@ const LoginController = {
             }else{
                 result.neighborData.status = "error"
                 result.neighborData.message = "no NeighborData"
+            }
+
+            //getCategoryData
+
+            sqlquery = 'select * from bagcategory'
+            recordset = await request.query(sqlquery)
+            result.categoryData = {}
+            if(recordset.rowsAffected[0]!=0){
+              // console.log(recordset.recordset)
+              result.categoryData.status = "success"
+              result.categoryData.data = recordset.recordset
+
+            }else{
+                result.categoryData.status = "error"
+                result.cc.message = "no CategoryData"
             }
 
       
