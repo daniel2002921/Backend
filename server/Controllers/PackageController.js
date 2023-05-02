@@ -18,10 +18,25 @@ const PackageController = {
             const pool = await sql.connect(Sql_config)
             const request = pool.request();
 
-            //getTableData
-            let sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,delivery_time,\
-            sign,householder from package left join bagcategory as cate on cate.id = package.cate'
+            //
+            let sqlquery = "select case when sign = 1 then '已簽收' else '未簽收' end as title, count(*) as sum\
+             from package group by sign"
             let recordset = await request.query(sqlquery)
+            result.summarySignStatusData = {}
+            if(recordset.rowsAffected[0]!=0){
+              // console.log(recordset.recordset)
+              result.summarySignStatusData.status = "success"
+              result.summarySignStatusData.data = recordset.recordset
+
+            }else{
+                result.summarySignStatusData.status = "error"
+                result.summarySignStatusData.message = "no summarySignStatusData"
+            }
+
+            //getTableData
+            sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,cate.id as cate_id,delivery_time,\
+            sign,householder from package left join bagcategory as cate on cate.id = package.cate where package.sign = 0'
+            recordset = await request.query(sqlquery)
             result.tableData = {}
             if(recordset.rowsAffected[0]!=0){
               // console.log(recordset.recordset)
@@ -87,8 +102,8 @@ const PackageController = {
           
           const pool = await sql.connect(Sql_config)
           const request = pool.request();
-          let sqlquery = "insert package  (reciver_name, cate, delivery_time,householder)\
-          VALUES ("+"'"+reqData.reciever + "', " + reqData.cate + ", '" + reqData.deliverytime + "', " + reqData.neighbor + ");"
+          let sqlquery = "insert package  (reciver_name, cate, delivery_time,householder,sign)\
+          VALUES ("+"'"+reqData.reciever + "', " + reqData.cate + ", '" + reqData.deliverytime + "', " + reqData.neighbor + " , 0);"
           await request.query(sqlquery)
 
           result.status = "success"
@@ -107,7 +122,66 @@ const PackageController = {
       
 
 
+    },
+    acceptPackage:(req,res)=>{
+      let reqData = req.body.data
+      console.log(reqData)
+      res.setHeader('Content-Type', 'application/json');
+      
+      (async () => {
+        let result = {}
+
+        try{
+          
+          const pool = await sql.connect(Sql_config)
+          const request = pool.request();
+          let sqlquery = "update package set sign = 1, accept_time = '"+ reqData.accept_time +"' \
+          where package_no = '" + reqData.package_no + "'"
+          await request.query(sqlquery)
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          console.log(err)
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+      })()
+    },
+
+    deletePackage:(req,res)=>{
+      let reqData = req.body.data
+      console.log(reqData)
+      res.setHeader('Content-Type', 'application/json');
+      
+      (async () => {
+        let result = {}
+
+        try{
+          
+          const pool = await sql.connect(Sql_config)
+          const request = pool.request();
+          let sqlquery = "delete package where package_no = '" + reqData + "'"
+          await request.query(sqlquery)
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          console.log(err)
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+      })()
     }
+
 
 
   }
