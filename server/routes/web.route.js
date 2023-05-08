@@ -16,5 +16,6 @@ router.get('/package/index', PackageController.index);
 router.post('/package/create', PackageController.create);
 router.post('/package/accept', PackageController.acceptPackage);
 router.post('/package/delete', PackageController.deletePackage);
+router.post('/package/edit', PackageController.editPackage);
 
 export default router;

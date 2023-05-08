@@ -35,7 +35,7 @@ const PackageController = {
 
             //getTableData
             sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,cate.id as cate_id,delivery_time,\
-            sign,householder from package left join bagcategory as cate on cate.id = package.cate where package.sign = 0'
+            sign,householder from package left join bagcategory as cate on cate.id = package.cate where package.sign = 0 order by package_no desc'
             recordset = await request.query(sqlquery)
             result.tableData = {}
             if(recordset.rowsAffected[0]!=0){
@@ -180,7 +180,37 @@ const PackageController = {
           res.send(result)
         }
       })()
-    }
+    },
+    editPackage:(req,res)=>{
+      let reqData = req.body.data
+      console.log(reqData)
+      res.setHeader('Content-Type', 'application/json');
+      
+      (async () => {
+        let result = {}
+
+        try{
+          
+          const pool = await sql.connect(Sql_config)
+          const request = pool.request();
+          let sqlquery = "update package set reciver_name = '"+ reqData.reciever +"', householder = '"+ reqData.neighbor +"', \
+          cate = '"+ reqData.cate +"', delivery_time = '"+ reqData.deliverytime +"' \
+          where package_no = '" + reqData.package_no + "'"
+          await request.query(sqlquery)
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          console.log(err)
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+      })()
+    },
 
 
 
