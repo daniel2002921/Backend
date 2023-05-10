@@ -13,6 +13,7 @@ router.get('/1', (req, res) => {
 router.post('/Login', LoginController.index);
 
 router.get('/package/index', PackageController.index);
+router.get('/package/indexDoughnut', PackageController.indexDoughnut);
 router.post('/package/create', PackageController.create);
 router.post('/package/accept', PackageController.acceptPackage);
 router.post('/package/delete', PackageController.deletePackage);

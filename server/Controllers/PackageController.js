@@ -89,6 +89,43 @@ const PackageController = {
         }
       })()
     },
+    indexDoughnut:(req,res)=>{
+      let reqData = req.body.data
+      console.log(reqData)
+      res.setHeader('Content-Type', 'application/json');
+      
+      (async () => {
+        let result = {}
+
+        try{
+          
+          let sqlquery = "select case when sign = 1 then '已簽收' else '未簽收' end as title, count(*) as sum\
+            from package group by sign"
+          let recordset = await request.query(sqlquery)
+          result.summarySignStatusData = {}
+          if(recordset.rowsAffected[0]!=0){
+            // console.log(recordset.recordset)
+            result.summarySignStatusData.status = "success"
+            result.summarySignStatusData.data = recordset.recordset
+
+          }else{
+              result.summarySignStatusData.status = "error"
+              result.summarySignStatusData.message = "no summarySignStatusData"
+          }
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          console.log(err)
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+      })()
+    },
     
     create:(req,res)=>{
       let reqData = req.body.data
