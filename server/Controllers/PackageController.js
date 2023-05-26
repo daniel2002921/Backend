@@ -110,7 +110,47 @@ const PackageController = {
 
           }else{
               result.summarySignStatusData.status = "error"
-              result.summarySignStatusData.message = "no summarySignStatusData"
+              result.summarySignStatusData.message = "no indexDoughnutData"
+          }
+
+          result.status = "success"
+          result = JSON.stringify(result)
+          res.send(result)
+
+        }catch(err){
+          result.status = "error"
+          result.message = err
+          console.log(err)
+          result = JSON.stringify(result)
+          res.send(result)
+        }
+      })()
+    },
+
+    indexBarChart:(req,res)=>{
+      res.setHeader('Content-Type', 'application/json');
+      
+      (async () => {
+        let result = {}
+
+        try{
+          const pool = await sql.connect(Sql_config)
+          const request = pool.request();
+          
+          let sqlquery = "SELECT YEAR(delivery_time) AS year, MONTH(delivery_time) AS month, COUNT(*) AS total_count\
+          FROM package\
+          GROUP BY YEAR(delivery_time), MONTH(delivery_time)\
+          ORDER BY year, month;"
+          let recordset = await request.query(sqlquery)
+          result.indexBarChartData = {}
+          if(recordset.rowsAffected[0]!=0){
+            // console.log(recordset.recordset)
+            result.indexBarChartData.status = "success"
+            result.indexBarChartData.data = recordset.recordset
+
+          }else{
+              result.indexBarChartData.status = "error"
+              result.indexBarChartData.message = "no indexBarChartData"
           }
 
           result.status = "success"
