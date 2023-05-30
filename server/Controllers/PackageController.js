@@ -33,6 +33,21 @@ const PackageController = {
                 result.summarySignStatusData.message = "no summarySignStatusData"
             }
 
+            //gettodayArriveBag
+            sqlquery = 'select count(*) as count from package where YEAR(delivery_time) = YEAR(SYSDATETIME()) \
+            and MONTH(delivery_time) = MONTH(SYSDATETIME()) and DAY(delivery_time) = DAY(SYSDATETIME()) '
+            recordset = await request.query(sqlquery)
+            result.todayArriveBag = {}
+            if(recordset.rowsAffected[0]!=0){
+              // console.log(recordset.recordset)
+              result.todayArriveBag.status = "success"
+              result.todayArriveBag.data = recordset.recordset[0].count
+
+            }else{
+                result.todayArriveBag.status = "success"
+                result.todayArriveBag.message = "no todayArriveBag"
+            }
+
             //getTableData
             sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,cate.id as cate_id,delivery_time,\
             sign,householder from package left join bagcategory as cate on cate.id = package.cate where package.sign = 0 order by package_no desc'
@@ -137,10 +152,34 @@ const PackageController = {
           const pool = await sql.connect(Sql_config)
           const request = pool.request();
           
-          let sqlquery = "SELECT YEAR(delivery_time) AS year, MONTH(delivery_time) AS month, COUNT(*) AS total_count\
-          FROM package\
-          GROUP BY YEAR(delivery_time), MONTH(delivery_time)\
-          ORDER BY year, month;"
+          let sqlquery = "WITH month_list AS (\
+            SELECT 1 AS month_num, '1月' AS month\
+            UNION ALL SELECT 2, '2月'\
+            UNION ALL SELECT 3, '3月'\
+            UNION ALL SELECT 4, '4月'\
+            UNION ALL SELECT 5, '5月'\
+            UNION ALL SELECT 6, '6月'\
+            UNION ALL SELECT 7, '7月'\
+            UNION ALL SELECT 8, '8月'\
+            UNION ALL SELECT 9, '9月'\
+            UNION ALL SELECT 10, '10月'\
+            UNION ALL SELECT 11, '11月'\
+            UNION ALL SELECT 12, '12月'\
+            ),\
+            year_table AS (\
+                SELECT DISTINCT YEAR(delivery_time) AS year\
+                FROM package\
+            )\
+            SELECT year_table.year, month_list.month, COALESCE(month_counts.total_count, 0) AS total_count\
+            FROM year_table\
+            CROSS JOIN month_list\
+            LEFT JOIN (\
+                SELECT YEAR(delivery_time) AS year, MONTH(delivery_time) AS month_num, COUNT(*) AS total_count\
+                FROM package\
+                GROUP BY YEAR(delivery_time), MONTH(delivery_time)\
+            ) AS month_counts\
+            ON year_table.year = month_counts.year AND month_list.month_num = month_counts.month_num\
+            ORDER BY year_table.year, month_list.month_num;"
           let recordset = await request.query(sqlquery)
           result.indexBarChartData = {}
           if(recordset.rowsAffected[0]!=0){
