@@ -50,7 +50,7 @@ const PackageController = {
 
             //getTableData
             sqlquery = 'select top(20) package_no,reciver_name,sign_name ,cate.name as cate,cate.id as cate_id,delivery_time,\
-            sign,householder from package left join bagcategory as cate on cate.id = package.cate where package.sign = 0 order by package_no desc'
+            sign,householder,neighbor.name as neighbor_name from package left join bagcategory as cate on cate.id = package.cate left join neighbor  on neighbor.id = package.householder where package.sign = 0 order by package_no desc'
             recordset = await request.query(sqlquery)
             result.tableData = {}
             if(recordset.rowsAffected[0]!=0){
