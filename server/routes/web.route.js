@@ -3,6 +3,7 @@ import config from '../../config/config.js';
 import LoginController from '../Controllers/LoginController.js'
 import PackageController from '../Controllers/PackageController.js'
 import SettingController from '../Controllers/SettingController.js'
+import BillboardController from '../Controllers/BillboardController.js'
 
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.get('/setting/getneighbordata', SettingController.getneighbordata);
 router.post('/setting/neighbor_create', SettingController.neighborCreate);
 router.post('/setting/neighbor_edit', SettingController.neighborEdit);
 router.post('/setting/neighbor_delete', SettingController.neighborDelete);
+
+
+router.post('/billboard/createPost', BillboardController.createPost);
 
 export default router;
