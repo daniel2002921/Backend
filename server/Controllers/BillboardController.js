@@ -43,8 +43,8 @@ const BillboardController = {
 
             const pool = await sql.connect(Sql_config)
             const request = pool.request();
-            let sqlquery = "insert billboard (title,cate,is_top,billboard_content,create_time)\
-            VALUES ("+"'"+reqData.title + "', " + reqData.cate + ", " + reqData.isTop + ", '" + reqData.content + "',"+ 'FORMAT(GETDATE(), '+"'yyyy-MM-dd HH:mm'"+"));"
+            let sqlquery = "insert billboard (title,cate,is_top,billboard_content,create_time,create_user)\
+            VALUES ("+"'"+reqData.title + "', " + reqData.cate + ", " + reqData.isTop + ", '" + reqData.content + "',"+ 'FORMAT(GETDATE(), '+"'yyyy-MM-dd HH:mm'"+"), "+reqData.create_user + ");"
             console.log( sqlquery)
             await request.query(sqlquery)
 
@@ -76,7 +76,7 @@ const BillboardController = {
       })()
     },
 
-    neighborCreate:(req,res)=>{
+    getPostData:(req,res)=>{
       let reqData = req.body.data
       console.log(reqData)
       res.setHeader('Content-Type', 'application/json');
@@ -86,23 +86,18 @@ const BillboardController = {
         
         try{
 
-          //驗證住戶名稱是否重複，若重複則return error
-          let check =  await SettingController.checkNeighborExist(reqData.name);
-          if(check == true){
 
-            result.status = 'error'
-            result.message = '住戶名稱重複，請重新輸入'
-
-          }else{
+ 
 
             const pool = await sql.connect(Sql_config)
             const request = pool.request();
-            let sqlquery = "insert neighbor  (name)\
-            VALUES ("+"'"+reqData.name + "');"
-            await request.query(sqlquery)
+            let sqlquery = "select top(20)* from billboard"
+            let recordset = await request.query(sqlquery)
+            
             result.status = "success"
+            result.data = recordset.recordset
 
-          }
+
          
           
 

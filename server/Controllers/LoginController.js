@@ -28,6 +28,7 @@ const LoginController = {
               if(recordset.rowsAffected[0]!=0){
                 let sqlUsername = recordset.recordset[0].account
                 let sqlPassword = recordset.recordset[0].password
+                let sqlID = recordset.recordset[0].id
 
                 if (keyInPassword!=sqlPassword){
                   result.status = "error"
@@ -35,6 +36,7 @@ const LoginController = {
                 }
                 if(keyInPassword == sqlPassword){
                   result.status = "success"
+                  result.Id = sqlID
                   result.message = "登入成功"
                 }
 

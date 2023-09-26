@@ -30,5 +30,7 @@ router.post('/setting/neighbor_delete', SettingController.neighborDelete);
 
 
 router.post('/billboard/createPost', BillboardController.createPost);
+router.get('/billboard/getPostData', BillboardController.getPostData);
+
 
 export default router;
